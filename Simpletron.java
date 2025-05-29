@@ -1,6 +1,32 @@
+import java.util.Arrays;
+
 public class Simpletron{
     private int[] memory = new int[Utilities.MAX_INSTRUCTIONS];
     private int accumulator;
+    private int instructionCounter = 0;
+    private int numInstructions;
+
+    public Simpletron(){
+        Utilities.printStartScreen();
+        memory = Utilities.loadInstructions();
+        setNumInstructions();
+        Utilities.printEndInput();
+        printMemoryDump();
+    }
+
+    public void executeProgram(){
+        int instruction = memory[instructionCounter];
+        while(instruction != -99999){
+            if (isValidInstruction(instruction)){
+                processInstruction(instruction);
+            } else {
+                System.out.println("*** Attempt to execute invalid instruction\t***");
+                System.out.println("*** Simpletron execution abnormally terminated\t***");
+                instructionCounter = numInstructions;
+            }
+            instruction  = memory[instructionCounter];
+        }    
+    }
 
     public void processInstruction(int instruction){
         int opCode = instruction / 100;
@@ -8,36 +34,94 @@ public class Simpletron{
         executeInstruction(operand, opCode);
     }
 
+    private boolean isValidInstruction(int instruction){
+        return instruction > -10000 && instruction < 1000 || instruction == -99999;
+    }
+
     private void executeInstruction(int operand, int opCode){
         switch(opCode){
             case OPCodes.READ:
-            break;
+                memory[operand] = Utilities.readData();
+                break;
             case OPCodes.WRITE:
-            break;
+                System.out.println(memory[operand]);
+                break;
             case OPCodes.LOAD:
-            break;
+                accumulator = memory[operand];
+                break;
             case OPCodes.STORE:
-            break;
+                memory[operand] = accumulator;
+                break;
             case OPCodes.ADD:
-            break;
+                accumulator += memory[operand];
+                break;
             case OPCodes.SUBTRACT:
-            break;
+                accumulator -= memory[operand];
+                break;
             case OPCodes.MULTIPLY:
-            break;
+                accumulator *= memory[operand];
+                break;
             case OPCodes.DIVIDE:
-            break;
+                try{
+                    accumulator /= memory[operand];
+                } catch (ArithmeticException e){
+                    System.out.println("*** Attempt to divide by zero\t\t\t\t***");
+                    System.out.println("*** Simpletron execution abnormally terminated\t***");
+                    instructionCounter = numInstructions;
+                }
+                    
+                break;
             case OPCodes.BRANCH:
-            break;
+                instructionCounter = operand;
+                break;
             case OPCodes.BRANCHNEG:
-            break;
+                if(accumulator < 0){
+                    instructionCounter = operand;
+                } else {
+                    instructionCounter++;
+                }
+                break;
             case OPCodes.BRANCHZERO:
-            break;
+                if(accumulator == 0){
+                    instructionCounter = operand;
+                } else {
+                    instructionCounter++;
+                }
+                break;
             case OPCodes.HALT:
-            break;
-
+                System.out.println("*** Simpletron execution terminated ***");
+                instructionCounter = numInstructions;
+                break;
+        }//end switch
+        if(opCode < OPCodes.BRANCH){
+            instructionCounter++;
         }
     }
 
+    public void setNumInstructions(){
+        int i = 0;
+        while(memory[i] != -99999){
+            i++;
+        }
+        numInstructions =  i;
+    }
+
+    private void printMemoryDump(){
+        for(int i = 0; i < 10; i++){
+            System.out.print("\t" + i);
+        }
+        for(int i = 0; i < memory.length / 10; i++){
+            System.out.println();
+            System.out.print(i + "\t");
+            for(int j = 0; j < 10; j++){
+                if(memory[i * 10 + j] > 0){
+                    System.out.print("+");
+                }
+                System.out.print(memory[i * 10 + j] + "\t");
+            }
+        }
+        System.out.println();
+    }
 
     public int[] getMemory(){
         return memory;

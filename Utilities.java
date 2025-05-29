@@ -43,21 +43,25 @@ public class Utilities {
             instructions[instructionCount] = opCode;
             instructionCount++;
         } while(opCode != -99999);
-        s.close();
         return instructions;
     }
 
-
-    public static int readData(){
+    
+    public static int readData() {
         Scanner s = new Scanner(System.in);
         int val = 0;
-        System.out.print("Enter an integer: ");
-        try{
-            val = s.nextInt();
-        }catch(InputMismatchException e){
-            val = readData();
+        boolean valid = false;
+
+        while (!valid) {
+            System.out.print("Enter an integer: ");
+            try {
+                val = s.nextInt();
+                valid = true;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter an integer.");
+                s.next();
+            }
         }
-        s.close();
         return val;
     }
 }
