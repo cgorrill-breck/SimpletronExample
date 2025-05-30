@@ -5,12 +5,16 @@ public class Simpletron{
     private int accumulator;
     private int instructionCounter = 0;
     private int numInstructions;
+    private int opCode;
+    private int operand;
+    private int register;
 
     public Simpletron(){
         Utilities.printStartScreen();
         memory = Utilities.loadInstructions();
         setNumInstructions();
         Utilities.printEndInput();
+        executeProgram();
         printMemoryDump();
     }
 
@@ -29,13 +33,14 @@ public class Simpletron{
     }
 
     public void processInstruction(int instruction){
-        int opCode = instruction / 100;
-        int operand = instruction % 100;
+        opCode = instruction / 100;
+        operand = instruction % 100;
+        register = instruction;
         executeInstruction(operand, opCode);
     }
 
     private boolean isValidInstruction(int instruction){
-        return instruction > -10000 && instruction < 1000 || instruction == -99999;
+        return instruction > -10000 && instruction < 10000 || instruction == -99999;
     }
 
     private void executeInstruction(int operand, int opCode){
@@ -92,7 +97,11 @@ public class Simpletron{
                 System.out.println("*** Simpletron execution terminated ***");
                 instructionCounter = numInstructions;
                 break;
-        }//end switch
+            default:
+                System.out.println("*** Invalid Instruction\t\t\t\t***");
+                System.out.println("*** Simpletron execution abnormally terminated\t***");
+                instructionCounter = numInstructions;
+            }//end switch
         if(opCode < OPCodes.BRANCH){
             instructionCounter++;
         }
@@ -106,7 +115,10 @@ public class Simpletron{
         numInstructions =  i;
     }
 
+
+    
     private void printMemoryDump(){
+        printRegisters();
         for(int i = 0; i < 10; i++){
             System.out.print("\t" + i);
         }
@@ -114,13 +126,27 @@ public class Simpletron{
             System.out.println();
             System.out.print(i + "\t");
             for(int j = 0; j < 10; j++){
-                if(memory[i * 10 + j] > 0){
+                if(memory[i * 10 + j] >= 0){
                     System.out.print("+");
                 }
-                System.out.print(memory[i * 10 + j] + "\t");
+                if(memory[i * 10 + j] == 0){
+                    System.out.print("0000\t");
+                } else {
+                    System.out.print(memory[i * 10 + j] + "\t");
+                }
             }
         }
         System.out.println();
+    }
+
+    private void printRegisters(){
+        System.out.println("REGISTERS:");
+        System.out.println("accumulator:\t\t" + accumulator);
+        System.out.println("instructionCounter:\t" + instructionCounter);
+        System.out.println("instructionRegister:\t" + register);
+        System.out.println("operationCode:\t\t" + opCode);
+        String opString = (operand == 0) ? "00" : (operand + "");
+        System.out.println("operand:\t\t" + opString);
     }
 
     public int[] getMemory(){

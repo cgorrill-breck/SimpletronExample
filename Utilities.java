@@ -38,7 +38,8 @@ public class Utilities {
         int opCode;
         int instructionCount = 0;
         do {
-            System.out.print("? ");
+            String instructionCountString = instructionCount < 10 ? "0" + instructionCount : instructionCount + "";
+            System.out.print(instructionCountString + " ? ");
             opCode = s.nextInt();
             instructions[instructionCount] = opCode;
             instructionCount++;
