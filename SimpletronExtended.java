@@ -1,5 +1,5 @@
-public class Simpletron{
-    private int[] memory = new int[Utilities.MAX_INSTRUCTIONS];
+public class SimpletronExtended{
+    private int[] memory = new int[Utilities.MAX_INSTRUCTIONS_EXTENDED];
     private int accumulator;
     private int instructionCounter = 0;
     private int numInstructions;
@@ -7,9 +7,9 @@ public class Simpletron{
     private int operand;
     private int register;
 
-    public Simpletron(){
-        Utilities.printStartScreen();
-        memory = Utilities.loadInstructions();
+    public SimpletronExtended(){
+        Utilities.printStartScreenExtended();
+        memory = Utilities.loadInstructionsExtended();
         setNumInstructions();
         Utilities.printEndInput();
         executeProgram();
@@ -18,7 +18,7 @@ public class Simpletron{
 
     public void executeProgram(){
         int instruction = memory[instructionCounter];
-        while(instruction != Utilities.END_OF_INSTRUCTIONS){
+        while(instruction != Utilities.END_OF_INSTRUCTIONS_EXTENDED){
             if (isValidInstruction(instruction)){
                 processInstruction(instruction);
             } else {
@@ -31,14 +31,14 @@ public class Simpletron{
     }
 
     public void processInstruction(int instruction){
-        opCode = instruction / 100;
-        operand = instruction % 100;
+        opCode = instruction / 1000;
+        operand = instruction % 1000;
         register = instruction;
         executeInstruction(operand, opCode);
     }
 
     private boolean isValidInstruction(int instruction){
-        return instruction > -10000 && instruction < 10000 || instruction == -99999;
+        return instruction > -100000 && instruction < 100000 || instruction == Utilities.END_OF_INSTRUCTIONS_EXTENDED;
     }
 
     private void executeInstruction(int operand, int opCode){
@@ -107,7 +107,7 @@ public class Simpletron{
 
     public void setNumInstructions(){
         int i = 0;
-        while(memory[i] != Utilities.END_OF_INSTRUCTIONS){
+        while(memory[i] != Utilities.END_OF_INSTRUCTIONS_EXTENDED){
             i++;
         }
         numInstructions =  i;
